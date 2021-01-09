@@ -5,11 +5,14 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/muchlist/KalselDevApi/controller"
 	"github.com/muchlist/KalselDevApi/db"
+	"github.com/muchlist/KalselDevApi/middleware"
 	"log"
 )
 
 func mapUrls(app *fiber.App) {
 	app.Use(logger.New())
+	app.Use(middleware.LimitRequest())
+
 	app.Static("/images", "./static/images")
 
 	api := app.Group("/api/v1")
