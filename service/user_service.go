@@ -7,6 +7,7 @@ import (
 	"github.com/muchlist/KalselDevApi/utils/mjwt"
 	"github.com/muchlist/erru_utils_go/rest_err"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -31,6 +32,7 @@ type UserServiceInterface interface {
 	EditUser(email string, userEdit dto.UserEditRequest) (*dto.UserResponse, rest_err.APIError)
 	DeleteUser(email string) rest_err.APIError
 	Login(dto.UserLoginRequest) (*dto.UserLoginResponse, rest_err.APIError)
+	Refresh(login dto.UserRefreshTokenRequest) (*dto.UserRefreshTokenResponse, rest_err.APIError)
 	PutAvatar(email string, fileLocation string) (*dto.UserResponse, rest_err.APIError)
 	ChangePassword(data dto.UserChangePasswordRequest) rest_err.APIError
 	ResetPassword(data dto.UserChangePasswordRequest) rest_err.APIError
@@ -160,10 +162,54 @@ func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse,
 		Avatar:       user.Avatar,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		Expired:      time.Now().Add(time.Minute * time.Duration(login.Limit)).Unix(),
 	}
 
 	return &userResponse, nil
 
+}
+
+//Refresh token
+func (u *userService) Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRefreshTokenResponse, rest_err.APIError) {
+
+	token, apiErr := mjwt.Obj.ValidateToken(payload.RefreshToken)
+	if apiErr != nil {
+		return nil, apiErr
+	}
+	claims, apiErr := mjwt.Obj.ReadToken(token)
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
+	// cek apakah tipe claims token yang dikirim adalah tipe refresh (1)
+	if claims.Type != mjwt.Refresh {
+		return nil, rest_err.NewAPIError("Token tidak valid", http.StatusUnprocessableEntity, "jwt_error", []interface{}{"not a refresh token"})
+	}
+
+	if payload.Limit == 0 || payload.Limit > 10080 { // 10080 minute = 7 day
+		payload.Limit = 10080
+	}
+
+	AccessClaims := mjwt.CustomClaim{
+		Identity:    claims.Identity,
+		Name:        claims.Name,
+		IsAdmin:     claims.IsAdmin,
+		ExtraMinute: time.Duration(payload.Limit),
+		Type:        mjwt.Access,
+		Fresh:       false,
+	}
+
+	accessToken, err := mjwt.Obj.GenerateToken(AccessClaims)
+	if err != nil {
+		return nil, err
+	}
+
+	userRefreshTokenResponse := dto.UserRefreshTokenResponse{
+		AccessToken: accessToken,
+		Expired:     time.Now().Add(time.Minute * time.Duration(payload.Limit)).Unix(),
+	}
+
+	return &userRefreshTokenResponse, nil
 }
 
 //PutAvatar memasukkan lokasi file (path) ke dalam database user

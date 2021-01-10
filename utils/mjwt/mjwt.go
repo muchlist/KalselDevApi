@@ -83,7 +83,7 @@ func (j *jwtUtils) ReadToken(token *jwt.Token) (*CustomClaim, rest_err.APIError)
 		Name:     claims[nameKey].(string),
 		Exp:      int64(claims[expKey].(float64)),
 		IsAdmin:  claims[isAdminKey].(bool),
-		Type:     claims[tokenTypeKey].(int),
+		Type:     int(claims[tokenTypeKey].(float64)),
 		Fresh:    claims[freshKey].(bool),
 	}
 

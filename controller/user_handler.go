@@ -52,7 +52,7 @@ func (u *userHandler) GetProfile(c *fiber.Ctx) error {
 }
 
 //Insert menambahkan user
-func (u *userHandler) Insert(c *fiber.Ctx) error {
+func (u *userHandler) Register(c *fiber.Ctx) error {
 
 	var user dto.UserRequest
 	if err := c.BodyParser(&user); err != nil {
@@ -184,6 +184,28 @@ func (u *userHandler) Login(c *fiber.Ctx) error {
 	}
 
 	response, apiErr := u.service.Login(login)
+	if apiErr != nil {
+		return c.Status(apiErr.Status()).JSON(apiErr)
+	}
+
+	return c.JSON(response)
+}
+
+//Login login
+func (u *userHandler) RefreshToken(c *fiber.Ctx) error {
+
+	var payload dto.UserRefreshTokenRequest
+	if err := c.BodyParser(&payload); err != nil {
+		apiErr := rest_err.NewBadRequestError(err.Error())
+		return c.Status(apiErr.Status()).JSON(apiErr)
+	}
+
+	if err := payload.Validate(); err != nil {
+		apiErr := rest_err.NewBadRequestError(err.Error())
+		return c.Status(apiErr.Status()).JSON(apiErr)
+	}
+
+	response, apiErr := u.service.Refresh(payload)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(apiErr)
 	}

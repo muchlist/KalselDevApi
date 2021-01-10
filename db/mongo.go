@@ -13,6 +13,7 @@ import (
 const (
 	connectTimeout = 10
 	mongoURLGetKey = "MONGO_DB_URL"
+	databaseName   = "kalseldev"
 )
 
 var (
@@ -43,7 +44,7 @@ func Init() (*mongo.Client, context.Context, context.CancelFunc) {
 		panic(err)
 	}
 
-	Db = Client.Database("user_go")
+	Db = Client.Database(databaseName)
 
 	return Client, ctx, cancel
 }

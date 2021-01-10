@@ -70,14 +70,14 @@ func authValidator(authHeader string, role role) (*mjwt.CustomClaim, rest_err.AP
 		return nil, apiErr
 	}
 
-	token, err := mjwt.Obj.ValidateToken(tokenString[1])
-	if err != nil {
-		return nil, err
+	token, apiErr := mjwt.Obj.ValidateToken(tokenString[1])
+	if apiErr != nil {
+		return nil, apiErr
 	}
 
-	claims, err := mjwt.Obj.ReadToken(token)
-	if err != nil {
-		return nil, err
+	claims, apiErr := mjwt.Obj.ReadToken(token)
+	if apiErr != nil {
+		return nil, apiErr
 	}
 
 	switch role {

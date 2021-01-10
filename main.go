@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	// Utils
+	//Utils
 	cryptoUtils = crypt.NewCrypto()
 
 	//Dao
@@ -35,7 +35,13 @@ func mapUrls(app *fiber.App) {
 
 	api := app.Group("/api/v1")
 	api.Get("/ping", pingHandler.Ping)
-	api.Get("/user", userHandler.Find)
+	api.Post("/users", userHandler.Register)
+	api.Post("/login", userHandler.Login)
+	api.Post("/refresh", userHandler.RefreshToken)
+
+	apiAuth := app.Group("/api/v1")
+	apiAuth.Use(middleware.AuthMiddleware)
+	apiAuth.Get("/users", userHandler.Find)
 }
 
 func main() {

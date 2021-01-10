@@ -103,4 +103,24 @@ type UserLoginResponse struct {
 	Avatar       string `json:"avatar" bson:"avatar"`
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
+	Expired      int64  `json:"expired"`
+}
+
+type UserRefreshTokenRequest struct {
+	RefreshToken string `json:"refresh_token"`
+	Limit        int    `json:"limit"`
+}
+
+//Validate input
+func (u UserRefreshTokenRequest) Validate() error {
+	return validation.ValidateStruct(&u,
+		validation.Field(&u.RefreshToken, validation.Required),
+	)
+}
+
+//UserRefreshTokenResponse mengembalikan token dengan claims yang
+//sama dengan token sebelumnya dengan expired yang baru
+type UserRefreshTokenResponse struct {
+	AccessToken string `json:"access_token"`
+	Expired     int64  `json:"expired"`
 }
