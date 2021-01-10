@@ -28,6 +28,6 @@ func main() {
 
 	app := fiber.New()
 	mapUrls(app)
-	log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(":3500"))
 
 }

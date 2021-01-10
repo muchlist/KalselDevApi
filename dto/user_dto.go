@@ -67,6 +67,7 @@ func (u UserEditRequest) Validate() error {
 type UserLoginRequest struct {
 	Email    string `json:"email" bson:"email"`
 	Password string `json:"password" bson:"password"`
+	Limit    int    `json:"limit"`
 }
 
 //Validate input
@@ -96,9 +97,10 @@ func (u UserChangePasswordRequest) Validate() error {
 
 //UserLoginResponse balikan user ketika sukses login dengan tambahan AccessToken
 type UserLoginResponse struct {
-	Email       string `json:"email" bson:"email"`
-	Name        string `json:"name" bson:"name"`
-	IsAdmin     bool   `json:"is_admin" bson:"is_admin"`
-	Avatar      string `json:"avatar" bson:"avatar"`
-	AccessToken string `json:"access_token"`
+	Email        string `json:"email" bson:"email"`
+	Name         string `json:"name" bson:"name"`
+	IsAdmin      bool   `json:"is_admin" bson:"is_admin"`
+	Avatar       string `json:"avatar" bson:"avatar"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }

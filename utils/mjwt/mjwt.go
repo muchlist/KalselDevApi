@@ -11,11 +11,17 @@ import (
 
 var (
 	//Obj penamaan standar untuk global variabel yang mengimplementasikan interface di dalam package
-	Obj JwtUtilsInterface
+	Obj    JwtUtilsInterface
+	secret []byte
 )
 
 func init() {
 	Obj = &jwtUtils{}
+
+	secret = []byte(os.Getenv(secretKey))
+	if string(secret) == "" {
+		secret = []byte("rahasia")
+	}
 }
 
 type JwtUtilsInterface interface {
@@ -31,29 +37,27 @@ const (
 	CLAIMS    = "claims"
 	secretKey = "SECRET_KEY"
 
-	identityKey = "identity"
-	nameKey     = "name"
-	isAdminKey  = "is_admin"
-	expKey      = "exp"
-	jtiKey      = "jti"
-)
-
-var (
-	secret = []byte(os.Getenv(secretKey))
+	identityKey  = "identity"
+	nameKey      = "name"
+	isAdminKey   = "is_admin"
+	tokenTypeKey = "type"
+	expKey       = "exp"
+	freshKey     = "fresh"
 )
 
 //GenerateToken membuat token jwt untuk login header, untuk menguji nilai payloadnya
 //dapat menggunakan situs jwt.io
 func (j *jwtUtils) GenerateToken(claims CustomClaim) (string, rest_err.APIError) {
 
-	expired := time.Now().Add(time.Hour * claims.TimeExtra).Unix()
+	expired := time.Now().Add(time.Minute * claims.ExtraMinute).Unix()
 
 	jwtClaim := jwt.MapClaims{}
 	jwtClaim[identityKey] = claims.Identity
 	jwtClaim[nameKey] = claims.Name
 	jwtClaim[isAdminKey] = claims.IsAdmin
 	jwtClaim[expKey] = expired
-	jwtClaim[jtiKey] = claims.Jti
+	jwtClaim[tokenTypeKey] = claims.Type
+	jwtClaim[freshKey] = claims.Fresh
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaim)
 
@@ -79,7 +83,8 @@ func (j *jwtUtils) ReadToken(token *jwt.Token) (*CustomClaim, rest_err.APIError)
 		Name:     claims[nameKey].(string),
 		Exp:      int64(claims[expKey].(float64)),
 		IsAdmin:  claims[isAdminKey].(bool),
-		Jti:      claims[jtiKey].(string),
+		Type:     claims[tokenTypeKey].(int),
+		Fresh:    claims[freshKey].(bool),
 	}
 
 	return &customClaim, nil

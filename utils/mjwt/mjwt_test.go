@@ -8,10 +8,9 @@ import (
 
 func TestJwtUtils_GenerateToken(t *testing.T) {
 	c := CustomClaim{
-		Identity:  "muchlis@gmail.com",
-		IsAdmin:   true,
-		Jti:       "",
-		TimeExtra: 12,
+		Identity:    "muchlis@gmail.com",
+		IsAdmin:     true,
+		ExtraMinute: 12,
 	}
 
 	signedToken, err := Obj.GenerateToken(c)
@@ -22,10 +21,9 @@ func TestJwtUtils_GenerateToken(t *testing.T) {
 
 func TestJwtUtils_ValidateToken(t *testing.T) {
 	c := CustomClaim{
-		Identity:  "muchlis@gmail.com",
-		IsAdmin:   true,
-		Jti:       "",
-		TimeExtra: 12,
+		Identity:    "muchlis@gmail.com",
+		IsAdmin:     true,
+		ExtraMinute: 12,
 	}
 
 	signedToken, err := Obj.GenerateToken(c)
@@ -49,10 +47,9 @@ func TestJwtUtils_NotValidateToken(t *testing.T) {
 
 func TestJwtUtils_ExpiredValidateToken(t *testing.T) {
 	c := CustomClaim{
-		Identity:  "muchlis@gmail.com",
-		IsAdmin:   true,
-		Jti:       "",
-		TimeExtra: -1,
+		Identity:    "muchlis@gmail.com",
+		IsAdmin:     true,
+		ExtraMinute: -1,
 	}
 
 	signedToken, err := Obj.GenerateToken(c)
@@ -67,10 +64,9 @@ func TestJwtUtils_ExpiredValidateToken(t *testing.T) {
 
 func TestJwtUtils_ReadToken(t *testing.T) {
 	c := CustomClaim{
-		Identity:  "muchlis@gmail.com",
-		IsAdmin:   true,
-		Jti:       "",
-		TimeExtra: 0,
+		Identity:    "muchlis@gmail.com",
+		IsAdmin:     true,
+		ExtraMinute: 0,
 	}
 	signedToken, err := Obj.GenerateToken(c)
 	assert.Nil(t, err)
@@ -82,5 +78,4 @@ func TestJwtUtils_ReadToken(t *testing.T) {
 	assert.Equal(t, "muchlis@gmail.com", claims.Identity)
 	assert.Equal(t, true, claims.IsAdmin)
 	assert.Equal(t, time.Now().Unix(), claims.Exp)
-	assert.Equal(t, "", claims.Jti)
 }

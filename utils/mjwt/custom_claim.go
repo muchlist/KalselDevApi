@@ -1,12 +1,20 @@
 package mjwt
 
-import "time"
+import (
+	"time"
+)
+
+const (
+	Access int = iota
+	Refresh
+)
 
 type CustomClaim struct {
-	Identity  string
-	Name      string
-	Exp       int64
-	TimeExtra time.Duration
-	Jti       string
-	IsAdmin   bool
+	Identity    string
+	Name        string
+	Exp         int64
+	ExtraMinute time.Duration
+	Type        int
+	Fresh       bool
+	IsAdmin     bool
 }

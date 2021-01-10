@@ -6,13 +6,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var (
-	//Obj penamaan standar untuk global variabel yang mengimplementasikan interface di dalam package
-	Obj CryptoInterface
-)
-
-func init() {
-	Obj = &cryptoObj{}
+func NewCrypto() CryptoInterface {
+	return &cryptoObj{}
 }
 
 type CryptoInterface interface {

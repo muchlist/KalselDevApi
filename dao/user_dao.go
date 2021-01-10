@@ -33,13 +33,8 @@ const (
 	keyTimeStamp = "timestamp"
 )
 
-var (
-	//UserDao objek global untuk entity user
-	UserDao UserDaoInterface
-)
-
-func init() {
-	UserDao = &userDao{}
+func NewUserDao() UserDaoInterface {
+	return &userDao{}
 }
 
 type userDao struct {
