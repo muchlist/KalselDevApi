@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+var (
+	Obj = NewJwt()
+)
+
 func TestJwtUtils_GenerateToken(t *testing.T) {
 	c := CustomClaim{
 		Identity:    "muchlis@gmail.com",

@@ -10,14 +10,14 @@ import (
 )
 
 var (
-	//Obj penamaan standar untuk global variabel yang mengimplementasikan interface di dalam package
-	Obj    JwtUtilsInterface
 	secret []byte
 )
 
-func init() {
-	Obj = &jwtUtils{}
+func NewJwt() JwtUtilsInterface {
+	return &jwtUtils{}
+}
 
+func init() {
 	secret = []byte(os.Getenv(secretKey))
 	if string(secret) == "" {
 		secret = []byte("rahasia")

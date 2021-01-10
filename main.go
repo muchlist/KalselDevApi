@@ -9,18 +9,20 @@ import (
 	"github.com/muchlist/KalselDevApi/middleware"
 	"github.com/muchlist/KalselDevApi/service"
 	"github.com/muchlist/KalselDevApi/utils/crypt"
+	"github.com/muchlist/KalselDevApi/utils/mjwt"
 	"log"
 )
 
 var (
 	//Utils
 	cryptoUtils = crypt.NewCrypto()
+	jwt         = mjwt.NewJwt()
 
 	//Dao
 	userDao = dao.NewUserDao()
 
 	//Service
-	userService = service.NewUserService(userDao, cryptoUtils)
+	userService = service.NewUserService(userDao, cryptoUtils, jwt)
 
 	//Controller or Handler
 	pingHandler = controller.NewPingHandler()

@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+var (
+	jwt = mjwt.NewJwt()
+)
+
 const (
 	headerKey = "Authorization"
 	bearerKey = "Bearer"
@@ -70,12 +74,12 @@ func authValidator(authHeader string, role role) (*mjwt.CustomClaim, rest_err.AP
 		return nil, apiErr
 	}
 
-	token, apiErr := mjwt.Obj.ValidateToken(tokenString[1])
+	token, apiErr := jwt.ValidateToken(tokenString[1])
 	if apiErr != nil {
 		return nil, apiErr
 	}
 
-	claims, apiErr := mjwt.Obj.ReadToken(token)
+	claims, apiErr := jwt.ReadToken(token)
 	if apiErr != nil {
 		return nil, apiErr
 	}

@@ -5,6 +5,10 @@ import (
 	"testing"
 )
 
+var (
+	Obj = NewCrypto()
+)
+
 func TestGenerateHash(t *testing.T) {
 	password := "password"
 	passwordHash, err := Obj.GenerateHash(password)

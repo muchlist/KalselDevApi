@@ -12,16 +12,18 @@ import (
 	"time"
 )
 
-func NewUserService(dao dao.UserDaoInterface, crypto crypt.CryptoInterface) UserServiceInterface {
+func NewUserService(dao dao.UserDaoInterface, crypto crypt.CryptoInterface, jwt mjwt.JwtUtilsInterface) UserServiceInterface {
 	return &userService{
 		dao:    dao,
 		crypto: crypto,
+		jwt:    jwt,
 	}
 }
 
 type userService struct {
 	dao    dao.UserDaoInterface
 	crypto crypt.CryptoInterface
+	jwt    mjwt.JwtUtilsInterface
 }
 
 type UserServiceInterface interface {
@@ -146,11 +148,11 @@ func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse,
 		Type:        mjwt.Refresh,
 	}
 
-	accessToken, err := mjwt.Obj.GenerateToken(AccessClaims)
+	accessToken, err := u.jwt.GenerateToken(AccessClaims)
 	if err != nil {
 		return nil, err
 	}
-	refreshToken, err := mjwt.Obj.GenerateToken(RefreshClaims)
+	refreshToken, err := u.jwt.GenerateToken(RefreshClaims)
 	if err != nil {
 		return nil, err
 	}
@@ -172,11 +174,11 @@ func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse,
 //Refresh token
 func (u *userService) Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRefreshTokenResponse, rest_err.APIError) {
 
-	token, apiErr := mjwt.Obj.ValidateToken(payload.RefreshToken)
+	token, apiErr := u.jwt.ValidateToken(payload.RefreshToken)
 	if apiErr != nil {
 		return nil, apiErr
 	}
-	claims, apiErr := mjwt.Obj.ReadToken(token)
+	claims, apiErr := u.jwt.ReadToken(token)
 	if apiErr != nil {
 		return nil, apiErr
 	}
@@ -199,7 +201,7 @@ func (u *userService) Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRef
 		Fresh:       false,
 	}
 
-	accessToken, err := mjwt.Obj.GenerateToken(AccessClaims)
+	accessToken, err := u.jwt.GenerateToken(AccessClaims)
 	if err != nil {
 		return nil, err
 	}
