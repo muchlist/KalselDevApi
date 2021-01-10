@@ -17,13 +17,17 @@ const (
 
 var (
 	// Db objek sebagai database objek
-	Db *mongo.Database
-	mongoURL = os.Getenv(mongoURLGetKey)
+	Db       *mongo.Database
+	mongoURL = "mongodb://localhost:27017" // os.Getenv(mongoURLGetKey)
 )
 
 // Init menginisiasi database
 // responsenya digunakan untuk memutus koneksi apabila main program dihentikan
 func Init() (*mongo.Client, context.Context, context.CancelFunc) {
+
+	if os.Getenv(mongoURLGetKey) != "" {
+		mongoURL = os.Getenv(mongoURLGetKey)
+	}
 
 	Client, err := mongo.NewClient(options.Client().ApplyURI(mongoURL))
 	if err != nil {

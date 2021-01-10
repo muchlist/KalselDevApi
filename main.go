@@ -4,9 +4,27 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/muchlist/KalselDevApi/controller"
+	"github.com/muchlist/KalselDevApi/dao"
 	"github.com/muchlist/KalselDevApi/db"
 	"github.com/muchlist/KalselDevApi/middleware"
+	"github.com/muchlist/KalselDevApi/service"
+	"github.com/muchlist/KalselDevApi/utils/crypt"
 	"log"
+)
+
+var (
+	// Utils
+	cryptoUtils = crypt.NewCrypto()
+
+	//Dao
+	userDao = dao.NewUserDao()
+
+	//Service
+	userService = service.NewUserService(userDao, cryptoUtils)
+
+	//Controller or Handler
+	pingHandler = controller.NewPingHandler()
+	userHandler = controller.NewUserHandler(userService)
 )
 
 func mapUrls(app *fiber.App) {
@@ -16,7 +34,8 @@ func mapUrls(app *fiber.App) {
 	app.Static("/images", "./static/images")
 
 	api := app.Group("/api/v1")
-	api.Get("/ping", controller.Ping)
+	api.Get("/ping", pingHandler.Ping)
+	api.Get("/user", userHandler.Find)
 }
 
 func main() {
