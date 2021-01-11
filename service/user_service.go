@@ -254,7 +254,7 @@ func (u *userService) ChangePassword(data dto.UserChangePasswordRequest) rest_er
 	return nil
 }
 
-//ResetPassword . inputan password berada di level controller
+//ResetPassword . inputan password berada di level handler
 //hanya memproses field newPassword, mengabaikan field password
 func (u *userService) ResetPassword(data dto.UserChangePasswordRequest) rest_err.APIError {
 
