@@ -15,7 +15,7 @@ func TestJwtUtils_GenerateToken(t *testing.T) {
 		Fresh:       true,
 	}
 
-	signedToken, err := jwtObj.GenerateToken(c)
+	signedToken, err := JwtObj.GenerateToken(c)
 
 	assert.Nil(t, err)
 	assert.NotEmpty(t, signedToken)
@@ -28,10 +28,10 @@ func TestJwtUtils_ValidateToken(t *testing.T) {
 		ExtraMinute: 12,
 	}
 
-	signedToken, err := jwtObj.GenerateToken(c)
+	signedToken, err := JwtObj.GenerateToken(c)
 	assert.Nil(t, err)
 
-	tokenValid, err := jwtObj.ValidateToken(signedToken)
+	tokenValid, err := JwtObj.ValidateToken(signedToken)
 
 	assert.Nil(t, err)
 	assert.NotEmpty(t, tokenValid)
@@ -40,7 +40,7 @@ func TestJwtUtils_ValidateToken(t *testing.T) {
 func TestJwtUtils_NotValidateToken(t *testing.T) {
 	invalidToken := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9XX.eyJleHAiOjE2MDM4MDcyMzEsImlkZW50aXR5IjoibXVjaGxpc0BnbWFpbC5jb20iLCJpc19hZG1pbiI6dHJ1ZSwianRpIjoiIn0.dzKZdhPFtF-YC6uh5JZqBv7mhBjGTz1_rgIP-sRbYrU"
 
-	tokenValid, err := jwtObj.ValidateToken(invalidToken)
+	tokenValid, err := JwtObj.ValidateToken(invalidToken)
 
 	assert.Empty(t, tokenValid)
 	assert.NotNil(t, err)
@@ -54,10 +54,10 @@ func TestJwtUtils_ExpiredValidateToken(t *testing.T) {
 		ExtraMinute: -1,
 	}
 
-	signedToken, err := jwtObj.GenerateToken(c)
+	signedToken, err := JwtObj.GenerateToken(c)
 	assert.Nil(t, err)
 
-	tokenValid, err := jwtObj.ValidateToken(signedToken)
+	tokenValid, err := JwtObj.ValidateToken(signedToken)
 	assert.Nil(t, tokenValid)
 
 	assert.NotNil(t, err)
@@ -70,11 +70,11 @@ func TestJwtUtils_ReadToken(t *testing.T) {
 		IsAdmin:     true,
 		ExtraMinute: 0,
 	}
-	signedToken, err := jwtObj.GenerateToken(c)
+	signedToken, err := JwtObj.GenerateToken(c)
 	assert.Nil(t, err)
-	tokenValid, err := jwtObj.ValidateToken(signedToken)
+	tokenValid, err := JwtObj.ValidateToken(signedToken)
 	assert.Nil(t, err)
-	claims, err := jwtObj.ReadToken(tokenValid)
+	claims, err := JwtObj.ReadToken(tokenValid)
 	assert.Nil(t, err)
 
 	assert.Equal(t, "muchlis@gmail.com", claims.Identity)
