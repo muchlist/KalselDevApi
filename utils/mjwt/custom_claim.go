@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Enum untuk tipe jwt
 const (
 	Access int = iota
 	Refresh
