@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/muchlist/KalselDevApi/dao"
 	"github.com/muchlist/KalselDevApi/dto"
 	"github.com/muchlist/KalselDevApi/utils/crypt"
@@ -506,4 +507,107 @@ func TestUserService_ResetPassword_EmailNotFound(t *testing.T) {
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "Penggantian password gagal, email salah", err.Message())
+}
+
+func TestUserService_Refresh_Success(t *testing.T) {
+	input := dto.UserRefreshTokenRequest{
+		Limit: 5,
+	}
+
+	m := new(dao.MockDao)
+	j := new(mjwt.MockJwt)
+	j.On("ValidateToken", mock.Anything).Return(&jwt.Token{}, nil)
+	j.On("ReadToken", mock.Anything).Return(&mjwt.CustomClaim{
+		Type: mjwt.Refresh,
+	}, nil)
+
+	j.On("GenerateToken", mock.Anything).Return("accessToken", nil)
+
+	service := NewUserService(m, crypt.NewCrypto(), j)
+	res, err := service.Refresh(input)
+
+	assert.Nil(t, err)
+	assert.NotNil(t, res)
+	assert.Equal(t, "accessToken", res.AccessToken)
+	assert.Equal(t, time.Now().Add(time.Minute*time.Duration(input.Limit)).Unix(), res.Expired)
+
+}
+
+func TestUserService_Refresh_Token_Not_Valid(t *testing.T) {
+	input := dto.UserRefreshTokenRequest{
+		Limit: 5,
+	}
+
+	m := new(dao.MockDao)
+	j := new(mjwt.MockJwt)
+	j.On("ValidateToken", mock.Anything).Return(nil, rest_err.NewAPIError("Token signing method salah", http.StatusUnprocessableEntity, "jwt_error", nil))
+	service := NewUserService(m, crypt.NewCrypto(), j)
+	res, err := service.Refresh(input)
+
+	assert.Nil(t, res)
+	assert.NotNil(t, err)
+	assert.Equal(t, http.StatusUnprocessableEntity, err.Status())
+
+}
+
+func TestUserService_Refresh_Token_Read_Error(t *testing.T) {
+	input := dto.UserRefreshTokenRequest{
+		Limit: 5,
+	}
+
+	m := new(dao.MockDao)
+	j := new(mjwt.MockJwt)
+	j.On("ValidateToken", mock.Anything).Return(&jwt.Token{}, nil)
+	j.On("ReadToken", mock.Anything).Return(nil, rest_err.NewInternalServerError("gagal mapping token", nil))
+
+	service := NewUserService(m, crypt.NewCrypto(), j)
+	res, err := service.Refresh(input)
+
+	assert.Nil(t, res)
+	assert.NotNil(t, err)
+	assert.Equal(t, http.StatusInternalServerError, err.Status())
+
+}
+
+func TestUserService_Refresh_Token_Not_Refresh_Token(t *testing.T) {
+	input := dto.UserRefreshTokenRequest{
+		Limit: 1000000,
+	}
+
+	m := new(dao.MockDao)
+	j := new(mjwt.MockJwt)
+	j.On("ValidateToken", mock.Anything).Return(&jwt.Token{}, nil)
+	j.On("ReadToken", mock.Anything).Return(&mjwt.CustomClaim{
+		Type: mjwt.Access,
+	}, nil)
+
+	service := NewUserService(m, crypt.NewCrypto(), j)
+	res, err := service.Refresh(input)
+
+	assert.Nil(t, res)
+	assert.NotNil(t, err)
+	assert.Equal(t, http.StatusUnprocessableEntity, err.Status())
+
+}
+
+func TestUserService_Refresh_Token_Generate_Token_Error(t *testing.T) {
+	input := dto.UserRefreshTokenRequest{
+		Limit: 1000000,
+	}
+
+	m := new(dao.MockDao)
+	j := new(mjwt.MockJwt)
+	j.On("ValidateToken", mock.Anything).Return(&jwt.Token{}, nil)
+	j.On("ReadToken", mock.Anything).Return(&mjwt.CustomClaim{
+		Type: mjwt.Refresh,
+	}, nil)
+	j.On("GenerateToken", mock.Anything).Return("", rest_err.NewInternalServerError("gagal menandatangani token", nil))
+
+	service := NewUserService(m, crypt.NewCrypto(), j)
+	res, err := service.Refresh(input)
+
+	assert.Nil(t, res)
+	assert.NotNil(t, err)
+	assert.Equal(t, http.StatusInternalServerError, err.Status())
+
 }
