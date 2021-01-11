@@ -459,3 +459,51 @@ func TestUserService_ChangePassword_OldPasswordWrong(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, "Gagal mengganti password, password salah!", err.Message())
 }
+
+func TestUserService_ChangePassword_EmailWrong(t *testing.T) {
+	data := dto.UserChangePasswordRequest{
+		Email:       "email.salah@gmail.com",
+		Password:    "password",
+		NewPassword: "Password",
+	}
+	m := new(dao.MockDao)
+	m.On("GetUserByEmailWithPassword", mock.Anything).Return(nil, rest_err.NewUnauthorizedError("Username atau password tidak valid"))
+
+	service := NewUserService(m, crypt.NewCrypto(), mjwt.NewJwt())
+	err := service.ChangePassword(data)
+
+	assert.NotNil(t, err)
+	assert.Equal(t, "Username atau password tidak valid", err.Message())
+}
+
+func TestUserService_ResetPassword(t *testing.T) {
+	data := dto.UserChangePasswordRequest{
+		Email:       "whowho@gmail.com",
+		Password:    "",
+		NewPassword: "PasswordBaru",
+	}
+
+	m := new(dao.MockDao)
+	m.On("ChangePassword", mock.Anything).Return(nil)
+	service := NewUserService(m, crypt.NewCrypto(), mjwt.NewJwt())
+
+	err := service.ResetPassword(data)
+
+	assert.Nil(t, err)
+}
+
+func TestUserService_ResetPassword_EmailNotFound(t *testing.T) {
+	data := dto.UserChangePasswordRequest{
+		Email:       "emailsalah@gmail.com",
+		Password:    "",
+		NewPassword: "PasswordBaru",
+	}
+	m := new(dao.MockDao)
+	m.On("ChangePassword", mock.Anything).Return(rest_err.NewBadRequestError("Penggantian password gagal, email salah"))
+
+	service := NewUserService(m, crypt.NewCrypto(), mjwt.NewJwt())
+	err := service.ResetPassword(data)
+
+	assert.NotNil(t, err)
+	assert.Equal(t, "Penggantian password gagal, email salah", err.Message())
+}
