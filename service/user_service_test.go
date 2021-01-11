@@ -8,6 +8,7 @@ import (
 	"github.com/muchlist/KalselDevApi/utils/mjwt"
 	"github.com/muchlist/erru_utils_go/rest_err"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 	"testing"
@@ -145,13 +146,10 @@ func TestUserService_InsertUser_Success(t *testing.T) {
 	idResp := "5f969f62259eae481fb0e856"
 
 	m := new(dao.MockDao)
-	m.On("InsertUser", userInput).Return(&idResp, nil)
+	m.On("InsertUser", mock.Anything).Return(&idResp, nil)
 	m.On("CheckEmailAvailable", email).Return(true, nil)
 
-	b := new(crypt.MockBcrypt)
-	b.On("GenerateHash", userInput.Password).Return(userInput.Password, nil)
-
-	service := NewUserService(m, b, mjwt.NewJwt())
+	service := NewUserService(m, crypt.NewCrypto(), mjwt.NewJwt())
 
 	insertedId, err := service.InsertUser(userInput)
 
@@ -173,7 +171,7 @@ func TestUserService_InsertUser_EmailNotAvailable(t *testing.T) {
 	idResp := "5f969f62259eae481fb0e856"
 
 	m := new(dao.MockDao)
-	m.On("InsertUser", userInput).Return(&idResp, nil)
+	m.On("InsertUser", mock.Anything).Return(&idResp, nil)
 	m.On("CheckEmailAvailable", email).Return(false, rest_err.NewBadRequestError("Email tidak tersedia"))
 
 	service := NewUserService(m, crypt.NewCrypto(), mjwt.NewJwt())
