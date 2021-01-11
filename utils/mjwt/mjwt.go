@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	jwtObj JwtUtilsInterface
+	JwtObj JwtUtilsInterface
 	secret []byte
 )
 
 func NewJwt() JwtUtilsInterface {
-	return jwtObj
+	return JwtObj
 }
 
 func init() {
@@ -24,7 +24,7 @@ func init() {
 		secret = []byte("rahasia")
 	}
 
-	jwtObj = &jwtUtils{}
+	JwtObj = &jwtUtils{}
 }
 
 type JwtUtilsInterface interface {
