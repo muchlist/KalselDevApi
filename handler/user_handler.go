@@ -53,7 +53,7 @@ func (u *userHandler) GetProfile(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
-//Insert menambahkan user
+//Register menambahkan user
 func (u *userHandler) Register(c *fiber.Ctx) error {
 
 	var user dto.UserRequest

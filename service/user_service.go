@@ -71,6 +71,7 @@ func (u *userService) FindUsers() (dto.UserResponseList, rest_err.APIError) {
 func (u *userService) InsertUser(user dto.UserRequest) (*string, rest_err.APIError) {
 
 	user.Email = strings.ToLower(user.Email)
+	user.IsAdmin = false
 
 	// cek ketersediaan email
 	_, err := u.dao.CheckEmailAvailable(user.Email)
