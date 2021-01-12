@@ -20,4 +20,5 @@ func mapUrls(app *fiber.App) {
 
 	api.Get("/users", middleware.AuthMiddleware, userHandler.Find)
 	api.Get("/profile", middleware.AuthMiddleware, userHandler.GetProfile)
+	api.Post("/avatar", middleware.AuthMiddleware, userHandler.UploadImage)
 }
