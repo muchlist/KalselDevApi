@@ -2,6 +2,8 @@ package handler
 
 import (
 	"fmt"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/gofiber/fiber/v2"
 	"github.com/muchlist/KalselDevApi/dto"
 	"github.com/muchlist/KalselDevApi/service"
@@ -88,6 +90,14 @@ func (u *userHandler) Find(c *fiber.Ctx) error {
 //Edit mengedit user oleh admin
 func (u *userHandler) Edit(c *fiber.Ctx) error {
 
+	email := c.Params("user_email")
+	if err := validation.Validate(email,
+		is.Email,
+	); err != nil {
+		apiErr := rest_err.NewBadRequestError(err.Error())
+		return c.Status(apiErr.Status()).JSON(apiErr)
+	}
+
 	var user dto.UserEditRequest
 	if err := c.BodyParser(&user); err != nil {
 		apiErr := rest_err.NewBadRequestError(err.Error())
@@ -99,7 +109,7 @@ func (u *userHandler) Edit(c *fiber.Ctx) error {
 		return c.Status(apiErr.Status()).JSON(apiErr)
 	}
 
-	userEdited, apiErr := u.service.EditUser(c.Params("user_email"), user)
+	userEdited, apiErr := u.service.EditUser(email, user)
 	if apiErr != nil {
 		return c.Status(apiErr.Status()).JSON(apiErr)
 	}
@@ -156,8 +166,16 @@ func (u *userHandler) ChangePassword(c *fiber.Ctx) error {
 //ResetPassword mengganti password oleh admin pada user tertentu
 func (u *userHandler) ResetPassword(c *fiber.Ctx) error {
 
+	email := c.Params("user_email")
+	if err := validation.Validate(email,
+		is.Email,
+	); err != nil {
+		apiErr := rest_err.NewBadRequestError(err.Error())
+		return c.Status(apiErr.Status()).JSON(apiErr)
+	}
+
 	data := dto.UserChangePasswordRequest{
-		Email:       c.Params("user_email"),
+		Email:       email,
 		NewPassword: "Password",
 	}
 
@@ -191,7 +209,7 @@ func (u *userHandler) Login(c *fiber.Ctx) error {
 	return c.JSON(response)
 }
 
-//Login login
+//RefreshToken
 func (u *userHandler) RefreshToken(c *fiber.Ctx) error {
 
 	var payload dto.UserRefreshTokenRequest

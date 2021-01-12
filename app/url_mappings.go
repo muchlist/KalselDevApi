@@ -21,4 +21,13 @@ func mapUrls(app *fiber.App) {
 	api.Get("/users", middleware.AuthMiddleware, userHandler.Find)
 	api.Get("/profile", middleware.AuthMiddleware, userHandler.GetProfile)
 	api.Post("/avatar", middleware.AuthMiddleware, userHandler.UploadImage)
+
+	api.Post("/change-password", middleware.AuthMustFreshMiddleware, userHandler.ChangePassword)
+
+	apiAuthAdmin := app.Group("/api/v1/admin")
+	apiAuthAdmin.Use(middleware.AuthAdminMiddleware)
+	apiAuthAdmin.Put("/users/:user_email", userHandler.Edit)
+	apiAuthAdmin.Delete("/users/:user_email", userHandler.Delete)
+	apiAuthAdmin.Get("/users/:user_email/reset-password", userHandler.ResetPassword)
+
 }

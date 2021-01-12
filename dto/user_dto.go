@@ -89,7 +89,6 @@ type UserChangePasswordRequest struct {
 //Validate input
 func (u UserChangePasswordRequest) Validate() error {
 	return validation.ValidateStruct(&u,
-		validation.Field(&u.Email, validation.Required, is.Email),
 		validation.Field(&u.Password, validation.Required, validation.Length(3, 20)),
 		validation.Field(&u.NewPassword, validation.Required, validation.Length(3, 20)),
 	)

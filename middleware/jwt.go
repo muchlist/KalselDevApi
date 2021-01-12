@@ -92,7 +92,7 @@ func authValidator(authHeader string, role role) (*mjwt.CustomClaim, rest_err.AP
 		}
 	case freshAuth:
 		if !claims.Fresh {
-			apiErr := rest_err.NewUnauthorizedError("Rotten token, memerlukan token yang baru untuk mengakses halaman ini")
+			apiErr := rest_err.NewUnauthorizedError("Memerlukan token yang baru untuk mengakses halaman ini")
 			return nil, apiErr
 		}
 	}
