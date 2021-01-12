@@ -250,8 +250,8 @@ func (u *userHandler) UploadImage(c *fiber.Ctx) error {
 		return c.Status(apiErr.Status()).JSON(apiErr)
 	}
 
-	if file.Size > 2*1024*1024 { // 2 MB
-		apiErr := rest_err.NewBadRequestError("Ukuran file terlalu besar")
+	if file.Size > 1*1024*1024 { // 1 MB
+		apiErr := rest_err.NewBadRequestError("Ukuran file tidak dapat melebihi 1MB")
 		return c.Status(apiErr.Status()).JSON(apiErr)
 	}
 
