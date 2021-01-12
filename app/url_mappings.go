@@ -18,7 +18,6 @@ func mapUrls(app *fiber.App) {
 	api.Post("/login", userHandler.Login)
 	api.Post("/refresh", userHandler.RefreshToken)
 
-	apiAuth := app.Group("/api/v1")
-	apiAuth.Use(middleware.AuthMiddleware)
-	apiAuth.Get("/users", userHandler.Find)
+	api.Get("/users", middleware.AuthMiddleware, userHandler.Find)
+	api.Get("/profile", middleware.AuthMiddleware, userHandler.GetProfile)
 }
