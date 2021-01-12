@@ -10,7 +10,7 @@ func mapUrls(app *fiber.App) {
 	app.Use(logger.New())
 	app.Use(middleware.LimitRequest())
 
-	app.Static("/images", "./static/images")
+	app.Static("/media", "./static/media")
 
 	api := app.Group("/api/v1")
 	api.Get("/ping", pingHandler.Ping)

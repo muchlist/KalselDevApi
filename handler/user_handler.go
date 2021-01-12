@@ -255,8 +255,8 @@ func (u *userHandler) UploadImage(c *fiber.Ctx) error {
 		return c.Status(apiErr.Status()).JSON(apiErr)
 	}
 
-	path := "static/images/" + claims.Identity + fileExtension
-	pathInDb := "images/" + claims.Identity + fileExtension
+	path := "static/media/" + claims.Identity + fileExtension
+	pathInDb := "media/" + claims.Identity + fileExtension
 
 	err = c.SaveFile(file, path)
 	if err != nil {
