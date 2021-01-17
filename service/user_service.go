@@ -150,9 +150,6 @@ func (u *userService) Login(login dto.UserLoginRequest) (*dto.UserLoginResponse,
 	}
 
 	accessToken, err := u.jwt.GenerateToken(AccessClaims)
-	if err != nil {
-		return nil, err
-	}
 	refreshToken, err := u.jwt.GenerateToken(RefreshClaims)
 	if err != nil {
 		return nil, err
@@ -189,14 +186,20 @@ func (u *userService) Refresh(payload dto.UserRefreshTokenRequest) (*dto.UserRef
 		return nil, rest_err.NewAPIError("Token tidak valid", http.StatusUnprocessableEntity, "jwt_error", []interface{}{"not a refresh token"})
 	}
 
+	// mendapatkan data terbaru dari user
+	user, apiErr := u.dao.GetUserByEmail(strings.ToLower(claims.Identity))
+	if apiErr != nil {
+		return nil, apiErr
+	}
+
 	if payload.Limit == 0 || payload.Limit > 10080 { // 10080 minute = 7 day
 		payload.Limit = 10080
 	}
 
 	AccessClaims := mjwt.CustomClaim{
-		Identity:    claims.Identity,
-		Name:        claims.Name,
-		IsAdmin:     claims.IsAdmin,
+		Identity:    user.Email,
+		Name:        user.Name,
+		IsAdmin:     user.IsAdmin,
 		ExtraMinute: time.Duration(payload.Limit),
 		Type:        mjwt.Access,
 		Fresh:       false,
