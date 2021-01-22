@@ -1,7 +1,7 @@
 # KalselDevApi
 
 Source code rest-api pada situs kalselDev.  
-dokumentasi lengkap penggunaan api silahkan kunjungi [KalselDevDoc](https://kalsel.dev)
+Dokumentasi lengkap penggunaan api silahkan kunjungi [KalselDevDoc](https://kalsel.dev)
 
 
 ## Menjalankan program di mesin sendiri
@@ -25,7 +25,7 @@ Library ini digunakan untuk memformat response error dan logger sehingga respons
 
 # Kontribusi
 
-Kontribusi bisa dalam bentuk apapun, memperbaiki codingan, menambah fungsi, menambah dan memperbaiki dokumentasi, memberikan resource server, menyumbangkan ide dsb.
+Kontribusi bisa dalam bentuk apapun, memperbaiki codingan, share code yang mengimplementasikan api, membuat gambar illustrasi, menambah fungsi, menambah dan memperbaiki dokumentasi, memberikan resource server, menyumbangkan ide dsb.
 Author masih baru dalam hal open sourse silahkan sampaikan apapun yang mengganggu sodara.
 
 # Kontributor
