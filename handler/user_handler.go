@@ -15,14 +15,14 @@ import (
 	"path/filepath"
 )
 
-func NewUserHandler(userService service.UserServiceInterface) *userHandler {
+func NewUserHandler(userService service.UserServiceAssumer) *userHandler {
 	return &userHandler{
 		service: userService,
 	}
 }
 
 type userHandler struct {
-	service service.UserServiceInterface
+	service service.UserServiceAssumer
 }
 
 //Get menampilkan user berdasarkan ID (bukan email)

@@ -10,11 +10,11 @@ import (
 )
 
 var (
-	JwtObj JwtUtilsInterface
+	JwtObj JWTAssumer
 	secret []byte
 )
 
-func NewJwt() JwtUtilsInterface {
+func NewJwt() JWTAssumer {
 	return JwtObj
 }
 
@@ -27,7 +27,7 @@ func init() {
 	JwtObj = &jwtUtils{}
 }
 
-type JwtUtilsInterface interface {
+type JWTAssumer interface {
 	GenerateToken(claims CustomClaim) (string, rest_err.APIError)
 	ValidateToken(tokenString string) (*jwt.Token, rest_err.APIError)
 	ReadToken(token *jwt.Token) (*CustomClaim, rest_err.APIError)

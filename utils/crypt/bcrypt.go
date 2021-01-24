@@ -6,11 +6,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func NewCrypto() CryptoInterface {
+func NewCrypto() BcryptAssumer {
 	return &cryptoObj{}
 }
 
-type CryptoInterface interface {
+type BcryptAssumer interface {
 	GenerateHash(password string) (string, rest_err.APIError)
 	IsPWAndHashPWMatch(password string, hashPass string) bool
 }

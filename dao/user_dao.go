@@ -33,14 +33,14 @@ const (
 	keyTimeStamp = "timestamp"
 )
 
-func NewUserDao() UserDaoInterface {
+func NewUserDao() UserDaoAssumer {
 	return &userDao{}
 }
 
 type userDao struct {
 }
 
-type UserDaoInterface interface {
+type UserDaoAssumer interface {
 	InsertUser(user dto.UserRequest) (*string, rest_err.APIError)
 	GetUserByID(userID primitive.ObjectID) (*dto.UserResponse, rest_err.APIError)
 	GetUserByEmail(email string) (*dto.UserResponse, rest_err.APIError)

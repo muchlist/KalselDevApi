@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func NewUserService(dao dao.UserDaoInterface, crypto crypt.CryptoInterface, jwt mjwt.JwtUtilsInterface) UserServiceInterface {
+func NewUserService(dao dao.UserDaoAssumer, crypto crypt.BcryptAssumer, jwt mjwt.JWTAssumer) UserServiceAssumer {
 	return &userService{
 		dao:    dao,
 		crypto: crypto,
@@ -21,12 +21,12 @@ func NewUserService(dao dao.UserDaoInterface, crypto crypt.CryptoInterface, jwt 
 }
 
 type userService struct {
-	dao    dao.UserDaoInterface
-	crypto crypt.CryptoInterface
-	jwt    mjwt.JwtUtilsInterface
+	dao    dao.UserDaoAssumer
+	crypto crypt.BcryptAssumer
+	jwt    mjwt.JWTAssumer
 }
 
-type UserServiceInterface interface {
+type UserServiceAssumer interface {
 	GetUser(primitive.ObjectID) (*dto.UserResponse, rest_err.APIError)
 	GetUserByEmail(email string) (*dto.UserResponse, rest_err.APIError)
 	InsertUser(dto.UserRequest) (*string, rest_err.APIError)
